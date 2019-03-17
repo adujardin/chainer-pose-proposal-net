@@ -41,11 +41,9 @@ class Capture(threading.Thread):
         runtime = sl.RuntimeParameters()
         while not self.stop_event.is_set():
             try:
-                #ret_val, image = self.cap.read()
                 self.cap.grab(runtime)
-                self.cap.retrieve_image(mat, sl.VIEW.VIEW_LEFT)
+                self.cap.retrieve_image(mat, sl.VIEW.VIEW_LEFT, width=self.insize[0], height=self.insize[1])
                 image = cv2.cvtColor(mat.get_data(), cv2.COLOR_BGRA2RGB)
-                image = cv2.resize(image, self.insize)
                 self.queue.put(image, timeout=1)
             except queue.Full:
                 pass
