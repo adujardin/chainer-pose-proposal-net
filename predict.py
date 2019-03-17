@@ -84,7 +84,7 @@ def get_humans_by_feature(model, feature_map, detection_thresh=0.15, min_num_key
     selected = non_maximum_suppression(
         bbox=root_bbox, thresh=0.3, score=score)
     root_bbox = root_bbox[selected]
-    logger.info('detect instance {:.5f}'.format(time.time() - start))
+    #logger.info('detect instance {:.5f}'.format(time.time() - start))
     start = time.time()
 
     humans = []
@@ -110,7 +110,7 @@ def get_humans_by_feature(model, feature_map, detection_thresh=0.15, min_num_key
         if min_num_keypoints <= len(human) - 1:
             humans.append(human)
 
-    logger.info('alchemy time {:.5f}'.format(time.time() - start))
+    #logger.info('alchemy time {:.5f}'.format(time.time() - start))
     logger.info('num humans = {}'.format(len(humans)))
     return humans
 
@@ -123,17 +123,14 @@ def get_humans3d(humans, depth):
         for k, b in human.items():
             ymin, xmin, ymax, xmax = b
             if k:
-                x = int((xmin + xmax) / 2)
-                y = int((ymin + ymax) / 2)
-                z = depth[x, y] # TODO : search in the x_min->x_max interval if invalid values
-                #print("index " + str(x) + " " +str(y))
-                #print(depth[x, y])
-                kp = np.array([x, y, z])
+                i = int((xmin + xmax) / 2)
+                j = int((ymin + ymax) / 2)
+                f3 = depth[i, j] # TODO : search in the x_min->x_max interval if invalid values
+                kp = np.array([f3[0], f3[1], f3[2]])
                 human3d.append(kp)
         humans_3d.append(human3d)
-#            print("human : " + str(k) + " " + str(ymin) + " " + str(ymax)+ " " + str(xmin)+ " " + str(xmax))
 
-    logger.info('3d time {:.5f}'.format(time.time() - start))
+    #logger.info('3d time {:.5f}'.format(time.time() - start))
     return humans_3d
 
 
@@ -187,7 +184,7 @@ def draw_humans(keypoint_names, edges, pil_image, humans, mask=None, visbbox=Tru
                 drawer.line([bx, by, ex, ey],
                             fill=COLOR_MAP[keypoint_names[s]], width=3)
 
-    logger.info('draw humans {: .5f}'.format(time.time() - start))
+    #logger.info('draw humans {: .5f}'.format(time.time() - start))
     return pil_image
 
 

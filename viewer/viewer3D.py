@@ -2,6 +2,8 @@ from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
 
+from random import randint
+
 import ctypes
 import sys
 import math
@@ -146,6 +148,7 @@ class PyViewer3D:
         self.path_locker = threading.Lock()
         self.zed3d = zm.Zed3D()
         self.txt = ""
+        self.humans = []
         self.startx = 0
         self.starty = 0
 
@@ -254,6 +257,12 @@ class PyViewer3D:
         glVertex3f(c, 0, d)
         glEnd()
 
+    def draw_point(self, x, y, z, c1):
+        glBegin(GL_POINTS)
+        glColor3f(c1.r, c1.g, c1.b)
+        glVertex3f(x, y, z)
+        glEnd()
+
     def draw_grid_plan(self):
         c1 = zm.Color(13/255, 17/255, 20/255)
         c2 = zm.Color(213/255, 207/255, 200/255)
@@ -290,6 +299,7 @@ class PyViewer3D:
         self.draw_repere()
         self.zed3d.draw()
         self.print_text()
+        self.draw_humans()
         self.path_locker.release()
         glutSwapBuffers()
         glPopMatrix()
@@ -420,11 +430,27 @@ class PyViewer3D:
         glMatrixMode(GL_MODELVIEW)
         glPopMatrix()
 
+    def draw_humans(self):
+        if not self.is_init:
+            return
+        glPointSize(2)
+        for human in self.humans:
+            i = randint(0,255)
+            for kp in human:
+                c1 = zm.Color(i/255, 17/255, i/255)
+                #print("human " + str(kp[0]) + " " +str(kp[1]) +" "+ str(kp[2]))
+                self.draw_point(kp[0], kp[1], kp[2], c1)
+
+
     def update_text(self, string_txt):
         if not self.get_viewer_state():
             return
-
         self.txt = string_txt
+
+    def update_humans(self, humans):
+        if not self.get_viewer_state():
+            return
+        self.humans = humans
 
     def get_viewer_state(self):
         return self.is_init

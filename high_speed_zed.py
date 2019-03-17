@@ -50,7 +50,7 @@ class Capture(threading.Thread):
             try:
                 self.cap.grab(runtime)
                 self.cap.retrieve_image(left, sl.VIEW.VIEW_LEFT, width=self.insize[0], height=self.insize[1])
-                self.cap.retrieve_measure(depth, sl.MEASURE.MEASURE_DEPTH, width=self.insize[0], height=self.insize[1])
+                self.cap.retrieve_measure(depth, sl.MEASURE.MEASURE_XYZ, width=self.insize[0], height=self.insize[1])
                 image = cv2.cvtColor(left.get_data(), cv2.COLOR_BGRA2RGB)
                 self.queue.put((image, depth.get_data()), timeout=1)
             except queue.Full:
@@ -109,6 +109,10 @@ def high_speed(args, viewer):
         init_cap_params.svo_input_filename = svo_file_path
         init_cap_params.svo_real_time_mode = True
     init_cap_params.camera_resolution = sl.RESOLUTION.RESOLUTION_HD720
+    init_cap_params.depth_mode=sl.DEPTH_MODE.DEPTH_MODE_ULTRA
+    init_cap_params.coordinate_units=sl.UNIT.UNIT_METER
+    init_cap_params.coordinate_system=sl.COORDINATE_SYSTEM.COORDINATE_SYSTEM_RIGHT_HANDED_Y_UP
+    
     cap = sl.Camera()
     if not cap.is_opened():
         print("Opening ZED Camera...")
@@ -160,12 +164,14 @@ def high_speed(args, viewer):
             str_to_dsplay = msg + " " + fps_display
             cv2.putText(img_with_humans, fps_display, (10, 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
             cv2.imshow('Pose Proposal Network' + msg, img_with_humans)
-            
+
             viewer.update_text(str_to_dsplay)
+            viewer.update_humans(humans_3d)
 
             fps_time = time.time()
             # press Esc to exit
             if cv2.waitKey(1) == 27:
+                exit
                 main_event.set()
     except Exception as e:
         print(e)
@@ -178,8 +184,6 @@ def high_speed(args, viewer):
     capture.join()
     predictor.join()
     cap.close()
-
-
 
 
 def parse_arguments():
