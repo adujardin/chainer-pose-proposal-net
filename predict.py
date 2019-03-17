@@ -109,9 +109,32 @@ def get_humans_by_feature(model, feature_map, detection_thresh=0.15, min_num_key
                 i_h, i_w = j_h, j_w
         if min_num_keypoints <= len(human) - 1:
             humans.append(human)
+
     logger.info('alchemy time {:.5f}'.format(time.time() - start))
     logger.info('num humans = {}'.format(len(humans)))
     return humans
+
+# Super basic version to test
+def get_humans3d(humans, depth):
+    start = time.time()
+    humans_3d = []
+    for human in humans:
+        human3d = []
+        for k, b in human.items():
+            ymin, xmin, ymax, xmax = b
+            if k:
+                x = int((xmin + xmax) / 2)
+                y = int((ymin + ymax) / 2)
+                z = depth[x, y] # TODO : search in the x_min->x_max interval if invalid values
+                #print("index " + str(x) + " " +str(y))
+                #print(depth[x, y])
+                kp = np.array([x, y, z])
+                human3d.append(kp)
+        humans_3d.append(human3d)
+#            print("human : " + str(k) + " " + str(ymin) + " " + str(ymax)+ " " + str(xmin)+ " " + str(xmax))
+
+    logger.info('3d time {:.5f}'.format(time.time() - start))
+    return humans_3d
 
 
 def draw_humans(keypoint_names, edges, pil_image, humans, mask=None, visbbox=True):
