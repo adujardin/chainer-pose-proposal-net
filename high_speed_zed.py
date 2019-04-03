@@ -101,7 +101,7 @@ def high_speed(args, viewer):
     detection_thresh = config.getfloat('predict', 'detection_thresh')
     min_num_keypoints = config.getint('predict', 'min_num_keypoints')
     model = create_model(args, config)
-    svo_file_path = config.get('zed', 'svo_file_path')
+    svo_file_path = None#"/home/adujardin/Downloads/5m.svo" #config.get('zed', 'svo_file_path')
     
     init_cap_params = sl.InitParameters()
     if svo_file_path:

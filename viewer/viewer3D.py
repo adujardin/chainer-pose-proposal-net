@@ -433,11 +433,12 @@ class PyViewer3D:
     def draw_humans(self):
         if not self.is_init:
             return
-        glPointSize(2)
+        glPointSize(5)
         for human in self.humans:
             i = randint(0,255)
+            j = randint(0,255)
             for kp in human:
-                c1 = zm.Color(i/255, 17/255, i/255)
+                c1 = zm.Color(i/255, 17/255, j/255)
                 #print("human " + str(kp[0]) + " " +str(kp[1]) +" "+ str(kp[2]))
                 self.draw_point(kp[0], kp[1], kp[2], c1)
 
