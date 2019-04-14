@@ -149,6 +149,7 @@ class PyViewer3D:
         self.zed3d = zm.Zed3D()
         self.txt = ""
         self.humans = []
+        self.edges = []
         self.startx = 0
         self.starty = 0
 
@@ -256,6 +257,14 @@ class PyViewer3D:
         glColor3f(c2.r, c2.g, c2.b)
         glVertex3f(c, 0, d)
         glEnd()
+
+    def draw_line_3d(self, x1, y1, z1, x2, y2, z2, c1, c2):
+        glBegin(GL_LINES)
+        glColor3f(c1.r, c1.g, c1.b)
+        glVertex3f(x1, y1, z1)
+        glColor3f(c2.r, c2.g, c2.b)
+        glVertex3f(x2, y2, z2)
+        glEnd()     
 
     def draw_point(self, x, y, z, c1):
         glBegin(GL_POINTS)
@@ -440,7 +449,15 @@ class PyViewer3D:
                 color = p[1]
                 c1 = zm.Color(color[0]/255, color[1]/255, color[2]/255)
                 self.draw_point(point[0], point[1], point[2], c1)
-
+            for s, t in self.edges:
+                if s in human and t in human:
+                    color_s = human[s][1]
+                    color_t = human[t][1]
+                    c_s = zm.Color(color_s[0]/255, color_s[1]/255, color_s[2]/255)
+                    c_t = zm.Color(color_t[0]/255, color_t[1]/255, color_t[2]/255)
+                    p_s = human[s][0]
+                    p_t = human[t][0]
+                    self.draw_line_3d(p_s[0], p_s[1], p_s[2], p_t[0], p_t[1], p_t[2], c_s, c_t)
 
     def update_text(self, string_txt):
         if not self.get_viewer_state():

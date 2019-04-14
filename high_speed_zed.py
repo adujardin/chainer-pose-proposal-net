@@ -131,6 +131,8 @@ def high_speed(args, viewer):
 
     main_event = threading.Event()
 
+    viewer.edges = model.edges
+
     try:
         while not main_event.is_set() and cap.is_opened():
             try:
