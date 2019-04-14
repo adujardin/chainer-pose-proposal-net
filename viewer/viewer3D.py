@@ -435,12 +435,11 @@ class PyViewer3D:
             return
         glPointSize(5)
         for human in self.humans:
-            i = randint(0,255)
-            j = randint(0,255)
-            for kp in human:
-                c1 = zm.Color(i/255, 17/255, j/255)
-                #print("human " + str(kp[0]) + " " +str(kp[1]) +" "+ str(kp[2]))
-                self.draw_point(kp[0], kp[1], kp[2], c1)
+            for k, p in human.items():
+                point = p[0]
+                color = p[1]
+                c1 = zm.Color(color[0]/255, color[1]/255, color[2]/255)
+                self.draw_point(point[0], point[1], point[2], c1)
 
 
     def update_text(self, string_txt):

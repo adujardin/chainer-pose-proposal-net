@@ -61,6 +61,22 @@ def estimate(model, image, detection_thresh=0.15, min_num_keypoints=-1):
     feature_map = get_feature(model, image)
     return get_humans_by_feature(model, feature_map, detection_thresh, min_num_keypoints)
 
+def dumpclean(obj):
+    if type(obj) == dict:
+        for k, v in obj.items():
+            if hasattr(v, '__iter__'):
+                print(k)
+                dumpclean(v)
+            else:
+                print('%s : %s' % (k, v))
+    elif type(obj) == list:
+        for v in obj:
+            if hasattr(v, '__iter__'):
+                dumpclean(v)
+            else:
+                print(v)
+    else:
+        print(obj)
 
 def get_humans_by_feature(model, feature_map, detection_thresh=0.15, min_num_keypoints=-1):
     resp, conf, x, y, w, h, e = feature_map
@@ -114,23 +130,29 @@ def get_humans_by_feature(model, feature_map, detection_thresh=0.15, min_num_key
     logger.info('num humans = {}'.format(len(humans)))
     return humans
 
+
 # Super basic version to test
-def get_humans3d(humans, depth):
+def get_humans3d(humans, depth, model):
     start = time.time()
     humans_3d = []
     for human in humans:
-        human3d = []
+
+        #print("-----------------------------")
+        #dumpclean(human)
+
+        human3d = {}
         for k, b in human.items():
             ymin, xmin, ymax, xmax = b
-            if k:
-                i = int((xmin + xmax) / 2)
-                j = int((ymin + ymax) / 2)
-                f3 = depth[i, j] # TODO : search in the x_min->x_max interval if invalid values
-                kp = np.array([f3[0], f3[1], f3[2]])
-                human3d.append(kp)
+            i = int((xmin + xmax) / 2)
+            j = int((ymin + ymax) / 2)
+            f3 = depth[i, j] # TODO : search in the x_min->x_max interval if invalid values
+            kp = np.array([f3[0], f3[1], f3[2]])
+            human3d[k] = (kp, COLOR_MAP[model.keypoint_names[k]])
+
+        #dumpclean(human3d)
         humans_3d.append(human3d)
 
-    #logger.info('3d time {:.5f}'.format(time.time() - start))
+    logger.info('3d time {:.5f}'.format(time.time() - start))
     return humans_3d
 
 

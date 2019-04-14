@@ -141,7 +141,7 @@ def high_speed(args, viewer):
                     detection_thresh,
                     min_num_keypoints
                 )
-                humans_3d = get_humans3d(humans,depth)
+                humans_3d = get_humans3d(humans,depth, model)
             except queue.Empty:
                 continue
             except Exception as e:
