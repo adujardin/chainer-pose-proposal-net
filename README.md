@@ -6,7 +6,7 @@ This project integrates the ZED SDK into the 2D pose estimation to provides a re
 
 ## Using the ZED stereo camera
 
-While the network can be run on CPU or GPU and doesn't required CUDA, the ZED SDK does. Therefore, this sample requires an Nvidia graphics card with CUDA, the detection is also obvisouly much faster on GPU.
+While the network can be run on CPU or GPU and doesn't require CUDA, the ZED SDK does. Therefore, this sample requires an Nvidia graphics card with CUDA, the detection is also obviously much faster on GPU.
 
 1. Install the required dependencies:
     
