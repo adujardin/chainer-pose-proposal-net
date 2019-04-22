@@ -135,21 +135,37 @@ def get_humans_by_feature(model, feature_map, detection_thresh=0.15, min_num_key
 def get_humans3d(humans, depth, model):
     start = time.time()
     humans_3d = []
+
+    width = model.insize[0]
+    height = model.insize[1]
+
     for human in humans:
-
-        #print("-----------------------------")
-        #dumpclean(human)
-
         human3d = {}
         for k, b in human.items():
             ymin, xmin, ymax, xmax = b
             i = int((xmin + xmax) / 2)
             j = int((ymin + ymax) / 2)
-            f3 = depth[i, j] # TODO : search in the x_min->x_max interval if invalid values
-            kp = np.array([f3[0], f3[1], f3[2]])
+
+            # Median around the kp
+            search_radius = 3
+
+            bound_i_inf = i-search_radius if (i-search_radius) > 0 else 0
+            bound_j_inf = j-search_radius if (j-search_radius) > 0 else 0
+            bound_i_sup = i+search_radius if (i+search_radius) > width else width
+            bound_j_sup = j+search_radius if (j+search_radius) > height else height
+            
+            roi = depth[bound_i_inf:bound_i_sup, bound_j_inf:bound_j_sup] 
+
+            fx = np.nanmedian(roi[:, :, 0])
+            fy = np.nanmedian(roi[:, :, 1])
+            fz = np.nanmedian(roi[:, :, 2])
+            kp = np.array([fx, fy, fz])
+
+            # Direct depth value read
+            #f3 = depth[i, j]
+            #kp = np.array([f3[0], f3[1], f3[2]])
             human3d[k] = (kp, COLOR_MAP[model.keypoint_names[k]])
 
-        #dumpclean(human3d)
         humans_3d.append(human3d)
 
     logger.info('3d time {:.5f}'.format(time.time() - start))

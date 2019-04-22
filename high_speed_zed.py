@@ -23,14 +23,7 @@ from OpenGL.GLUT import *
 import viewer.viewer3D as tv
 
 
-QUEUE_SIZE = 5
-
-"""
-Bonus script
-If you have good USB camera which gets image as well as 60 FPS,
-this script will be helpful for realtime inference
-"""
-
+QUEUE_SIZE = 3
 
 class Capture(threading.Thread):
 
@@ -46,6 +39,7 @@ class Capture(threading.Thread):
         left = sl.Mat()
         depth = sl.Mat()
         runtime = sl.RuntimeParameters()
+        #runtime.measure3D_reference_frame = sl.REFERENCE_FRAME.REFERENCE_FRAME_WORLD
         while not self.stop_event.is_set():
             try:
                 self.cap.grab(runtime)
@@ -111,6 +105,7 @@ def high_speed(args, viewer):
     init_cap_params.camera_resolution = sl.RESOLUTION.RESOLUTION_HD720
     init_cap_params.depth_mode=sl.DEPTH_MODE.DEPTH_MODE_ULTRA
     init_cap_params.coordinate_units=sl.UNIT.UNIT_METER
+    init_cap_params.depth_stabilization = True
     init_cap_params.coordinate_system=sl.COORDINATE_SYSTEM.COORDINATE_SYSTEM_RIGHT_HANDED_Y_UP
     
     cap = sl.Camera()
@@ -121,6 +116,10 @@ def high_speed(args, viewer):
         print(repr(status))
         exit()
 
+    py_transform = sl.Transform()
+    tracking_parameters = sl.TrackingParameters(init_pos=py_transform)
+    cap.enable_tracking(tracking_parameters)
+
     capture = Capture(cap, model.insize)
     predictor = Predictor(model=model, cap=capture)
 
@@ -128,9 +127,7 @@ def high_speed(args, viewer):
     predictor.start()
 
     fps_time = 0
-
     main_event = threading.Event()
-
     viewer.edges = model.edges
 
     try:
@@ -171,8 +168,10 @@ def high_speed(args, viewer):
             viewer.update_humans(humans_3d)
 
             fps_time = time.time()
+            key = cv2.waitKey(1)
+            
             # press Esc to exit
-            if cv2.waitKey(1) == 27:
+            if key == 27: 
                 exit
                 main_event.set()
     except Exception as e:

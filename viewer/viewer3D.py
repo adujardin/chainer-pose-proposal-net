@@ -182,8 +182,8 @@ class PyViewer3D:
 
         glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH)
 
-        w = glutGet(GLUT_SCREEN_WIDTH)
-        h = glutGet(GLUT_SCREEN_HEIGHT)
+        w = int(glutGet(GLUT_SCREEN_WIDTH)*0.5)
+        h = int(glutGet(GLUT_SCREEN_HEIGHT)*0.7)
         glutInitWindowSize(w, h)
 
         glutCreateWindow(b"ZED Tracking Viewer")
@@ -301,11 +301,11 @@ class PyViewer3D:
         glDisable(GL_LIGHTING)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
-        glClearColor(0.12, 0.12, 0.12, 1.0)
+        glClearColor(0.22, 0.22, 0.22, 1.0)
 
         self.path_locker.acquire()
         self.draw_grid_plan()
-        self.draw_repere()
+        #self.draw_repere()
         self.zed3d.draw()
         self.print_text()
         self.draw_humans()
@@ -364,7 +364,7 @@ class PyViewer3D:
             self.camera.zoom((y - self.starty) / 10.0)
             self.starty = y
         if self.rotate:
-            sensitivity = 100.0
+            sensitivity = 30.0
             rot = y - self.starty
             tmp = self.camera.get_position_from_look_at()
             tmp.y = tmp.x
@@ -448,7 +448,7 @@ class PyViewer3D:
                 point = p[0]
                 color = p[1]
                 c1 = zm.Color(color[0]/255, color[1]/255, color[2]/255)
-                self.draw_point(point[0], point[1], point[2], c1)
+                self.draw_point(point[1], -point[0], point[2], c1)
             for s, t in self.edges:
                 if s in human and t in human:
                     color_s = human[s][1]
@@ -457,7 +457,7 @@ class PyViewer3D:
                     c_t = zm.Color(color_t[0]/255, color_t[1]/255, color_t[2]/255)
                     p_s = human[s][0]
                     p_t = human[t][0]
-                    self.draw_line_3d(p_s[0], p_s[1], p_s[2], p_t[0], p_t[1], p_t[2], c_s, c_t)
+                    self.draw_line_3d(p_s[1], -p_s[0], p_s[2], p_t[1], -p_t[0], p_t[2], c_s, c_t)
 
     def update_text(self, string_txt):
         if not self.get_viewer_state():
