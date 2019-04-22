@@ -2,7 +2,7 @@
 
 Pose proposal network provides the 2D pose using a single image, similarly to [OpenPose](https://github.com/CMU-Perceptual-Computing-Lab/openpose), but much faster reaching real time speed on embedded CPU (see original work, running on a [Raspberry Pi Zero](https://twitter.com/9_ties/status/1059750417679114240)).
 
-This project integrates the ZED SDK into the 2D pose estimation to provides a real time 3D pose estimation, much faster than [OpenPose](https://github.com/adujardin/zed-openpose)
+This project integrates the ZED SDK into the 2D pose estimation to provides a real time 3D pose estimation, similarly to [ZED OpenPose](https://github.com/adujardin/zed-openpose), but lighter, royalty free (see [original work license](./LICENSE)) and in Python.
 
 ## Using the ZED stereo camera
 
@@ -21,10 +21,6 @@ While the network can be run on CPU or GPU and doesn't require CUDA, the ZED SDK
 ```bash
     python3 high_speed_zed.py result/resnet18_384x384_coco/
 ```
-
-## DISCLAIMER
-
-This is **work in progress**, the 3D estimation isn't robust as it directly reads the raw value in the depth map and doesn't deal with invalid values yet. The goal was to start with the ZED SDK integration, then 3D display with limbs and kp in color (this is the current state), then a more robust 3D estimation.
 
 
 ## Original Repo : 
