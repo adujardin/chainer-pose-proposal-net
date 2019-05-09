@@ -11,8 +11,10 @@ While the network can be run on CPU or GPU and doesn't require CUDA, the ZED SDK
 1. Install the required dependencies:
     
     1. [ZED SDK](https://www.stereolabs.com/developers/release/) and the [Python API](https://github.com/stereolabs/zed-python-api)
-    2. Chainer + Cupy
-
+    2. Chainer + Cupy (Make sure the cuda version match yours)
+```bash
+pip3 install chainer cupy-cuda100 chainercv # Optionnaly : ideep4py
+```
 
 2. Download a pretrained model from Idein [here](https://github.com/Idein/chainer-pose-proposal-net/releases), or retrain one (see below).
 
